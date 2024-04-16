@@ -3,7 +3,7 @@ Guida di Unreal Engine 5 per realizzare una schermata di Game Settings modulare 
 
 **Note:**
 - I nomi delle classi `cpp` e dei Blueprint fanno riferimento a un progetto che come iniziali `PR`, perciò hanno tutte il prefisso `PR`, da sostituire con il nome/iniziali del proprio progetto;
-- Molto spesso i nomi degli elementi all'interno dei Widget Blueprint devono corrispondere esattamente a quelli di Lyra per il corretto funzionamento, quindi si raccomanda di rinominare tutti gli elementi come riportato in questa guida;
+- Molto spesso i nomi degli elementi all'interno dei Widget Blueprint devono corrispondere esattamente a quelli di *Lyra* per il corretto funzionamento, quindi si raccomanda di rinominare tutti gli elementi come riportato in questa guida;
 - È consigliabile seguire la guida nell'ordine proposto, poiché molti passaggi sono indispensabili prima dei successivi.
 ## 1. Preparazione 
 ### 1.1. Aggiungere i Plugin
@@ -15,7 +15,7 @@ Per il funzionamento del sistema è necessario riportare i seguenti plugin dal `
 
 ![](Img/Plugins.png)
 
-Per farlo basta copiare e incollare le 4 cartelle dalla cartella `Plugins` di Lyra alla cartella `Plugins` del progetto (se non esiste, basterà crearla).
+Per farlo basta copiare e incollare le 4 cartelle dalla cartella `Plugins` di *Lyra* alla cartella `Plugins` del progetto (se non esiste, basterà crearla).
 ### 1.2. Aggiungere i Gameplay Modules
 Sono necessari i seguenti moduli per il corretto funzionamento del sistema, da aggiungere alle dipendenze pubbliche del file `ProjectName.Build.cs`:
 - `GameplayTags`
@@ -314,7 +314,7 @@ Le classi sono:
 	- Impostazioni di accessibilità (come le modalità daltonismo o i sottotitoli);
 	- Sensibilità del mouse.
 
-Non è ancora chiarissima l'utilità di suddividere i Settings in due classi separate, Lyra probabilmente lo fa per gestire anche le funzionalità in multiplayer, oppure i salvataggi in cloud.
+Non è ancora chiarissima l'utilità di suddividere i Settings in due classi separate, *Lyra* probabilmente lo fa per gestire anche le funzionalità in multiplayer, oppure i salvataggi in cloud.
 #### 2.1.1. Local Settings
 Rappresentano uno dei due tipi di Settings gestiti da *Lyra*, ovvero quelli relativi alla macchina su cui il gioco viene eseguito. Sono salvati e gestiti all'interno del Local Player, e per usarli bisogna creare la nuova classe `PRSettingsLocal`, figlia della classe `GameUserSettings`:
 
@@ -1578,7 +1578,7 @@ con la seguente dimensione:
 
 La componente `MyText` è di tipo `CommonTextBlock`. 
 ###### 3.1.1.3.1. (Facoltativo) Option Pips
-L'immagine `OptionsPips` è realizzata utilizzando un materiale presente nel progetto originale di Lyra, ma non è necessario al funzionamento. Se si vuole approfondire, si veda su *Lyra* il materiale `MI_UI_SettingsRotator` e si ricordi di visualizzare il `Graph` dell'asset `W_SettingsRotator`, in quanto contenente della logica indispensabile al funzionamento degli `OptionPips`.
+L'immagine `OptionsPips` è realizzata utilizzando un materiale presente nel progetto originale di *Lyra*, ma non è necessario al funzionamento. Se si vuole approfondire, si veda su *Lyra* il materiale `MI_UI_SettingsRotator` e si ricordi di visualizzare il `Graph` dell'asset `W_SettingsRotator`, in quanto contenente della logica indispensabile al funzionamento degli `OptionPips`.
 #### 3.1.2. (Facoltativo) Widget di Background per i GameSettings
 Il widget `Editors/WBP_SettingEntryBackground` è un widget figlio di `UserWidget` e viene utilizzato come contenitore/background nei widget dei settings. Non è necessario per il corretto funzionamento. È composto come segue:
 
@@ -2339,7 +2339,7 @@ E anche la spunta `Auto Activate` sia settata su `true`:
 ![](Img/Auto_Activate_true.png)
 
 La struttura del widget è la seguente:
-![](WBP_PRSettingScreen.png)
+![](Img/WBP_PRSettingScreen.png)
 
 - `AnimBoundBlur` (facoltativo) è un elemento `BackgroundBlur`;
 - `TopSettingsTabs` è il widget `WBP_HorizontalTabList` creato in precedenza;
