@@ -1,5 +1,5 @@
 # Game Settings (sulla base del progetto Lyra di Epic Games)
-Guida di Unreal Engine 5 per realizzare una schermata di Game Settings modulare e componibile sulla base di come viene realizzata nel progetto [*Lyra* di **Epic Games**](https://www.unrealengine.com/marketplace/en-US/product/lyra).
+Guida in Unreal Engine 5 per realizzare una schermata di Game Settings modulare e componibile sulla base di come viene realizzata nel progetto [*Lyra* di **Epic Games**](https://www.unrealengine.com/marketplace/en-US/product/lyra).
 
 **Note:**
 - I nomi delle classi `cpp` e dei Blueprint fanno riferimento a un progetto che come iniziali `PR`, perciò hanno tutte il prefisso `PR`, da sostituire con il nome/iniziali del proprio progetto;
