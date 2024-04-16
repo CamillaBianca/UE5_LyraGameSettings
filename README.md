@@ -1,4 +1,4 @@
-# Game Settings (sulla base del progetto Lyra di Epic Games)
+# Realizzare una schermata di Game Settings (sulla base del progetto Lyra di Epic Games)
 Guida in Unreal Engine 5 per realizzare una schermata di Game Settings modulare e componibile sulla base di come viene realizzata nel progetto [*Lyra* di **Epic Games**](https://www.unrealengine.com/marketplace/en-US/product/lyra).
 
 **Note:**
