@@ -1287,19 +1287,20 @@ UGameSettingCollection* UPRGameSettingRegistry::InitializeAudioSettings(UPRLocal
 #undef LOCTEXT_NAMESPACE
 ```
 ### 2.3. GameSetting Registry Visuals
-Come visto in precedenza, sono stati implementati 3 tipi diversi di Settings, a ognuno dei quali è associato un widget specifico. Per associare questi widget ai tipi di Settings è necessario creare un asset denominato "`GameSettingRegistryVisuals`" figlio di `DataAsset`, facendo `click destro sul Content Drawer → Miscellaneous → Data Asset` e selezionando poi la classe `Game Setting Visual Data`.
+Come visto in una [sezione precedente](https://github.com/CamillaBianca/UE5_LyraGameSettings/tree/main?tab=readme-ov-file#2211-possibili-tipi-di-settings), sono stati implementati 3 tipi diversi di Settings, a ognuno dei quali è associato un widget specifico. Per associare questi widget ai tipi di Settings è necessario creare un asset denominato "`GameSettingRegistryVisuals`" figlio di `DataAsset`, facendo `click destro sul Content Drawer → Miscellaneous → Data Asset` e selezionando poi la classe `Game Setting Visual Data`.
 
 A questo punto è possibile aggiungere le righe dedicate ai tipi di setting, considerando anche il tipo `GameSettingCollection`, che servirà per visualizzare le Collection sottoforma di `Header`:
 
 ![](Img/GameSettingRegistryVisuals.png)
 
-Ora è necessario creare i diversi widget che permetteranno di visualizzare a schermo quei tipi di Settings. Si segua la sezione riguardante la ***Visualizzazione dei Settings*** per realizzarli.
+Ora è necessario creare i diversi widget che permetteranno di visualizzare a schermo quei tipi di Settings. Si segua la [sezione riguardante la ***Visualizzazione dei Settings***](https://github.com/CamillaBianca/UE5_LyraGameSettings/tree/main?tab=readme-ov-file#3-visualizzazione-dei-settings) per realizzarli.
 #### 2.3.1. Extensions
 All'interno dell'asset `GameSettingRegistryVisuals` è possibile aggiungere elementi alla lista `Extensions`. Le *estensioni* non sono altro che dei widget che è possibile aggiungere a uno specifico setting (utilizzando il `DevName` definito nel codice), o a una specifica classe di setting, che potranno essere visualizzati assieme a descrizione e nome nel widget finale.
 
 ![](Img/GameSettingRegistryVisuals_Extensions.png)
 
 È consigliabile inserire le varie estensioni all'interno di una cartella a parte, chiamata `Extensions`.
+
 Per fare un esempio, il Setting con il `DevName` "`ArachnophobiaMode`" ha associato il seguente widget:
 
 ![](Img/ArachnophobiaExtension.jpg)
@@ -1328,9 +1329,10 @@ e con il seguente `Graph`:
 
 È importante che la componente `EnumOptions`, di tipo `DynamicEntryBox`, abbia popolato il campo `EntryWidgetClass` con un altro widget, creato a breve. Lo stesso widget deve essere inserito nella `Entry Class` del nodo `Create Entry of Class` della funzione `RebuildOptions` del `Graph` del widget `EnumOptionExtension`, qui sopra.
 
-Questo nuovo widget da creare è nominato `WBP_EnumOptionDetailsEntry`, è figlio di `UserWidget`ed è così composto (`EntryText` è di tipo `CommonTextBlock`):
+Questo nuovo widget da creare è nominato `WBP_EnumOptionDetailsEntry`, è figlio di `UserWidget` ed è così composto (`EntryText` è di tipo `CommonTextBlock`):
 
 ![](Img/WBP_EnumOptionDetailsEntry.png)
+
 con la seguente dimensione:
 
 ![](Img/ScreenSizeDesired.png)
@@ -1588,7 +1590,7 @@ con la seguente dimensione:
 
 La componente `Content` è di tipo `NamedSlot`.
 #### 3.1.3. GameSetting Missing
-Il widget `Editors/WBP_SettingsListEntry_Missing`, figlio di `GameSettingListEntry_Setting`, è utilizzato nel caso in cui ci fosse qualche errore o mancato riferimento. Viene utilizzato come widget di default nel pannello dei settings, come si vedrà in una sezione successiva. È realizzato come segue:
+Il widget `Editors/WBP_SettingsListEntry_Missing`, figlio di `GameSettingListEntry_Setting`, è utilizzato nel caso in cui ci fosse qualche errore o mancato riferimento. Viene utilizzato come widget di default nel pannello dei settings, come si vedrà in una [sezione successiva](https://github.com/CamillaBianca/UE5_LyraGameSettings/tree/main?tab=readme-ov-file#322-game-settings-panel). È realizzato come segue:
 
 ![](Img/WBP_SettingsListEntry_Missing.png)
 
@@ -1628,14 +1630,15 @@ Si noti che:
 - `EntryHeightSB` è un elemento `SizeBox`;
 - `Text_SettingName` è un elemento `CommonTextBlock`;
 - `Button_Navigate` corrisponde al widget `WBP_PRMenuButton` creato nella sezione ***Bottone di base***, e ha le seguenti impostazioni in questo widget:
-  ![](Img/WBP_SettingsListEntry_SubCollection_Button_Navigate.png)
+
+	![](Img/WBP_SettingsListEntry_SubCollection_Button_Navigate.png)
 
 Il `Graph` è il seguente:
 > [!IMPORTANT]
 > **WBP_SettingsListEntry_SubCollection**: [Open Graph on BlueprintUE](https://blueprintue.com/blueprint/-b-pztat/)
 
 Si noti che:
-- La funzione `GetPrimaryGamepad Focus Widget` è un override della funzione già presente nella classe padre (`GameSettingListEntrySetting_Navigation`), e viene utilizzata quando si usa il gamepad al posto di mouse e tastiera (come si vedrà più approfonditamente in una sezione successiva);
+- La funzione `GetPrimaryGamepad Focus Widget` è un override della funzione già presente nella classe padre (`GameSettingListEntrySetting_Navigation`), e viene utilizzata quando si usa il gamepad al posto di mouse e tastiera (come si vedrà più approfonditamente in una [sezione successiva](https://github.com/CamillaBianca/UE5_LyraGameSettings/tree/main?tab=readme-ov-file#33-incompleta-aggiungere-funzionalit%C3%A0-gamepad));
 - La variabile `OnHover` è un'animazione creata nella sezione `Designer → Animations` del Blueprint e viene visualizzata quando si passa col mouse sopra al widget.
 
 Infine, è importante ricordarsi di aggiungere questo nuovo widget nell'asset `GameSettingRegistryVisuals`:
@@ -1673,7 +1676,7 @@ Il `Graph` è il seguente:
 > [!IMPORTANT]
 > **WBP_SettingsListEntry_Discrete**: [Open Graph on BlueprintUE](https://blueprintue.com/blueprint/dfzpz9pj/)
 
-Si noti che la funzione `GetPrimaryGamepad Focus Widget` è un override della funzione già presente nella classe padre (`GameSettingListEntrySetting_Discrete`), e viene utilizzata quando si usa il gamepad al posto di mouse e tastiera (come si vedrà più approfonditamente in una sezione successiva).
+Si noti che la funzione `GetPrimaryGamepad Focus Widget` è un override della funzione già presente nella classe padre (`GameSettingListEntrySetting_Discrete`), e viene utilizzata quando si usa il gamepad al posto di mouse e tastiera (come si vedrà più approfonditamente in una [sezione successiva](https://github.com/CamillaBianca/UE5_LyraGameSettings/tree/main?tab=readme-ov-file#33-incompleta-aggiungere-funzionalit%C3%A0-gamepad)).
 
 Infine, è importante ricordarsi di aggiungere questo nuovo widget nell'asset `GameSettingRegistryVisuals`:
 
@@ -1692,15 +1695,15 @@ con la seguente dimensione:
 - `EntryHeightSB` è una `SizeBox`;
 - `Text_SettingName` e `Text_SettingValue` sono di tipo `CommonTextBlock`;
 - `Panel_Value` è una `HorizontalBox`;
-- L'immagine `ProgressBar` è realizzata utilizzando un materiale presente nel progetto originale di Lyra, ma non è necessario al funzionamento.
+- L'immagine `ProgressBar` è realizzata utilizzando un materiale presente nel progetto originale di *Lyra*, ma non è necessario al funzionamento.
 - `Slider_SettingValue` è un `AnalogSlider`.
 
 Il `Graph` è il seguente:
 > [!IMPORTANT]
-> WBP_SettingsListEntry_Scalar: [Open Graph on BlueprintUE](https://blueprintue.com/blueprint/a9w4p1jh/)
+> **WBP_SettingsListEntry_Scalar**: [Open Graph on BlueprintUE](https://blueprintue.com/blueprint/a9w4p1jh/)
 
 Si noti che:
-- La funzione `GetPrimaryGamepad Focus Widget` è un override della funzione già presente nella classe padre (`GameSettingListEntrySetting_Scalar`), e viene utilizzata quando si usa il gamepad al posto di mouse e tastiera (come si vedrà più approfonditamente in una sezione successiva);
+- La funzione `GetPrimaryGamepad Focus Widget` è un override della funzione già presente nella classe padre (`GameSettingListEntrySetting_Scalar`), e viene utilizzata quando si usa il gamepad al posto di mouse e tastiera (come si vedrà più approfonditamente in una [sezione successiva](https://github.com/CamillaBianca/UE5_LyraGameSettings/tree/main?tab=readme-ov-file#33-incompleta-aggiungere-funzionalit%C3%A0-gamepad));
 - La variabile `OnHover` è un'animazione creata nella sezione `Designer → Animations` del Blueprint e viene visualizzata quando si passa col mouse sopra al widget.
 
 Infine, è importante ricordarsi di aggiungere questo nuovo widget nell'asset `GameSettingRegistryVisuals`:
@@ -2030,7 +2033,7 @@ Ora è possibile creare il pannello centrale della schermata di Game Settings, `
 
 - `ListBorder` è di tipo `Border`;
 - `ListView` è di tipo `SafeZone`;
-- `ListView_Settings` è di tipo`GameSettingListView` e ha come `Visual Data` l'asset `GameSettingRegistryVisuals` creato qualche sezione fa:
+- `ListView_Settings` è di tipo`GameSettingListView` e ha come `Visual Data` l'asset `GameSettingRegistryVisuals` creato in una [sezione precedente](https://github.com/CamillaBianca/UE5_LyraGameSettings/tree/main?tab=readme-ov-file#23-gamesetting-registry-visuals):
   
   ![](Img/ListView_SettingsVisualData.png)
   
@@ -2083,7 +2086,7 @@ che ha questi stili, utilizzabili sempre tramite tag:
 ![](Img/SettingsDescriptionWarningStyles.png)
 #### 3.2.3. Game Settings Bottom Bar
 ##### 3.2.3.1. Action Button
-Per realizzare la barra inferiore della schermata dei Game Settings è necessario innanzitutto creare la classe C++ `PRBoundActionButton`, figlia della classe`CommonBoundActionButton`:
+Per realizzare la barra inferiore della schermata dei Game Settings è necessario innanzitutto creare la classe C++ `PRBoundActionButton`, figlia della classe `CommonBoundActionButton`:
 
 ```cpp
 //PRBoundActionButton.h
@@ -2336,7 +2339,8 @@ E anche la spunta `Auto Activate` sia settata su `true`:
 ![](Img/Auto_Activate_true.png)
 
 La struttura del widget è la seguente:
-WBP_PRSettingScreen.png)
+![](WBP_PRSettingScreen.png)
+
 - `AnimBoundBlur` (facoltativo) è un elemento `BackgroundBlur`;
 - `TopSettingsTabs` è il widget `WBP_HorizontalTabList` creato in precedenza;
 - `Settings_Panel` è il widget `WBP_SettingsPanel` creato in precedenza;
