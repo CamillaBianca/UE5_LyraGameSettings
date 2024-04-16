@@ -170,13 +170,13 @@ Creare innanzitutto due `DataTable` per le azioni di input, entrambe con una `Ro
 	- Riga `DefaultForward` per andare avanti (in realtà ancora non utilizzata nella pratica, ma per evitare messaggi di Warning è utile inserirla):
 	   ![](Img/DT_UniversalActions_Forward.png)
 	   
-2. `DT_SaveActions` (servirà più avanti, nella sezione 3.2.4):
-	- Riga `ApplyChanges` per applicare i cambiamenti appena selezionati:
+2. `DT_SaveActions` (servirà più avanti, nella [sezione 3.2.4](https://github.com/CamillaBianca/UE5_LyraGameSettings/blob/main/README.md#324-assemblare-il-game-settings-screen)):
+	- Riga `ApplyChanges` per applicare i cambiamenti quando verranno selezionati nel menu:
 	   ![](Img/DT_SaveActions_Apply.png)
 	   
 	   Si noti che il `Display Name` rappresenta il nome che apparirà sul bottone corrispondente.
 	   
-	- Riga `CancelChanges` per annullare i cambiamenti appena selezionati, ancora non salvati:
+	- Riga `CancelChanges` per annullare i cambiamenti quando verranno selezionati nel menu, ancora non salvati:
 	   ![](Img/DT_SaveActions_Cancel.png)
 
 Dopodiché è necessario creare un nuovo Blueprint (nominato `B_CommonInputData`) figlio di `CommonUIInputData` e inserire al suo interno le righe della prima DataTable appena creata:
@@ -189,26 +189,30 @@ A questo punto bisogna impostare questo nuovo asset come `Input Data` andando su
 
 Come ultima cosa, assicurarsi che nel file `DefaultGame.ini` ci sia la seguente impostazione:
 
-```ini title:DefaultGame.ini
+```ini
+//DefaultGame.ini
 [/Script/CommonInput.CommonInputSettings]  
 InputData=/Game/Developers/camil/LyraSettingsTest/B_CommonInputData.B_CommonInputData_C
 ```
 
-Sostituendo ovviamente  il path di `InputData` copiando la reference dell'asset `B_CommonInputData`, ricordandosi di prendere solo la parte tra gli apici, come visto nella sezione precedente riguardante la ***Policy***.
+Sostituendo ovviamente  il path di `InputData` copiando la reference dell'asset `B_CommonInputData`, ricordandosi di prendere solo la parte tra gli apici, come visto nella [sezione precedente riguardante la ***Policy***](https://github.com/CamillaBianca/UE5_LyraGameSettings/tree/main?tab=readme-ov-file#132-policy).
 #### 1.3.4. Common Game Instance
 Per il corretto funzionamento della CommonUI, è necessario creare un nuovo Blueprint figlio di `CommonGameInstance`, chiamato `PRCommonGameInstance`, e inserirlo nel file di configurazione `DefaultEngine.ini`:
 
-```ini {3} title:DefaultEngine.ini
+```ini
+//DefaultEngine.ini
 [/Script/EngineSettings.GameMapsSettings]
 //...
 GameInstanceClass=/Game/Developers/camil/LyraSettingsTest/PRCommonGameInstance.PRCommonGameInstance_C
 ```
 
-Ovviamente prendendo sempre il percorso dell'asset tramite `click destro → Copy Reference`, copiando solo la parte tra gli apici e aggiungendo la parte "`_C`" finale.
+Ovviamente prendendo sempre il percorso dell'asset tramite `click destro → Copy Reference`, copiando solo la parte tra gli apici e aggiungendo la parte "`_C`" finale, come visto nella [sezione precedente riguardante la ***Policy***](https://github.com/CamillaBianca/UE5_LyraGameSettings/tree/main?tab=readme-ov-file#132-policy).
 #### 1.3.5. Local Player
 Un'altra modifica da apportare per avere una CommonUI funzionante riguarda il Local Player. Creare quindi una nuova classe C++ da `Tools → New C++ Class`, denominata `PRLocalPlayer`, figlia della classe `CommonLocalPlayer`:
 
-```cpp title:PRLocalPlayer.h
+```cpp
+//PRLocalPlayer.h
+
 #include "CoreMinimal.h"  
 #include "CommonLocalPlayer.h"  
 #include "PRLocalPlayer.generated.h"  
@@ -217,7 +221,7 @@ class UPRSettingsLocal;
 class UPRSettingsShared;  
   
 UCLASS()  
-class PROJECTREMIND_API UPRLocalPlayer : public UCommonLocalPlayer  
+class PROJECTNAME_API UPRLocalPlayer : public UCommonLocalPlayer  
 {  
     GENERATED_BODY()  
   
@@ -238,7 +242,9 @@ private:
 };
 ```
 
-```cpp title:PRLocalPlayer.cpp
+```cpp
+//PRLocalPlayer.cpp
+
 #include "Settings/PRLocalPlayer.h"   
 #include "Settings/PRSettingsLocal.h"  
 #include "Settings/PRSettingsShared.h"  
@@ -292,9 +298,10 @@ L'ultima modifica necessaria per il corretto funzionamento della CommonUI preved
 ## 2. Settings Core
 ### 2.1. Classi per i Settings (locali e condivisi)
 All'interno del `PRLocalPlayer` vengono mantenuti i riferimenti a due nuove classi, che si occupano di gestire i singoli Settings e ciò che ne concerne, ovvero:
-- Il tipo di settaggio (è presente una sezione dedicata che spiega i diversi tipi);
+- Il tipo di settaggio (è presente una [sezione dedicata che spiega i diversi tipi](https://github.com/CamillaBianca/UE5_LyraGameSettings/tree/main?tab=readme-ov-file#2211-possibili-tipi-di-settings));
 - Le funzioni `getter` e `setter` (oltre che eventuali altre funzioni utili per gestirli);
 - Le logiche dietro al cambio dei settings, ovvero cosa succede se viene impostata un'opzione piuttosto che un'altra.
+
 Le classi sono:
 1. `PRSettingsLocal`, che eredita da `GameUserSettings`: contiene tutte le impostazioni relative alla macchina del giocatore, quindi tutte le funzionalità che riguardano il dispositivo su cui si gioca. Ad esempio:
 	- Impostazioni del display e della qualità grafica;
@@ -306,11 +313,14 @@ Le classi sono:
 	- Difficoltà del gameplay;
 	- Impostazioni di accessibilità (come le modalità daltonismo o i sottotitoli);
 	- Sensibilità del mouse.
+
 Non è ancora chiarissima l'utilità di suddividere i Settings in due classi separate, Lyra probabilmente lo fa per gestire anche le funzionalità in multiplayer, oppure i salvataggi in cloud.
 #### 2.1.1. Local Settings
 Rappresentano uno dei due tipi di Settings gestiti da *Lyra*, ovvero quelli relativi alla macchina su cui il gioco viene eseguito. Sono salvati e gestiti all'interno del Local Player, e per usarli bisogna creare la nuova classe `PRSettingsLocal`, figlia della classe `GameUserSettings`:
 
-```cpp title:PRSettingsLocal.h
+```cpp
+//PRSettingsLocal.h
+
 #include "CoreMinimal.h"  
 #include "GameFramework/GameUserSettings.h"  
 #include "UserSettings/PRDeveloperSettings.h"
@@ -404,7 +414,7 @@ struct FSubtitlesSettings
 // END Subtitles Struct 
   
 UCLASS(Config=Game)  
-class PROJECTREMIND_API UPRSettingsLocal : public UGameUserSettings  
+class PROJECTNAME_API UPRSettingsLocal : public UGameUserSettings  
 {  
     GENERATED_BODY()  
   
@@ -494,7 +504,9 @@ private:
 };
 ```
 
-```cpp title:PRSettingsLocal.cpp
+```cpp
+//PRSettingsLocal.cpp
+
 #include "Settings/PRSettingsLocal.h"  
   
 #include UE_INLINE_GENERATED_CPP_BY_NAME(PRSettingsLocal)  
@@ -621,7 +633,9 @@ In questo caso di test è stato deciso di inserire i seguenti Settings *locali*:
 ##### 2.1.1.1. Aggiornare il file DefaultEngine.ini
 Per rendere validi i salvataggi dei Local Settings, è necessario inserire la classe `PRSettingsLocal` come `GameUserSettingsClassName` nel file `DefaultEngine.ini`:
 
-```ini {2} title:DefaultEngine.ini
+```ini
+//DefaultEngine.ini
+//...
 [/Script/Engine.Engine]
 GameUserSettingsClassName=/Script/NomeProgetto.PRSettingsLocal
 //...
@@ -631,7 +645,9 @@ GameViewportClientClassName=/Script/CommonUI.CommonGameViewportClient
 #### 2.1.2. Shared Settings
 Rappresentano uno dei due tipi di Settings gestiti da *Lyra*, ovvero quelli relativi al giocatore e al gioco stesso. Sono salvati e gestiti all'interno del Local Player, e per usarli bisogna creare la nuova classe `PRSettingsShared`, figlia della classe `LocalPlayerSaveGame`:
 
-```cpp title:PRSettingsShared.h
+```cpp
+//PRSettingsShared.h
+
 #include "CoreMinimal.h"  
 #include "GameFramework/SaveGame.h"  
 #include "UObject/ObjectPtr.h"  
@@ -648,7 +664,7 @@ enum class EDifficultySetting : uint8
 };  
   
 UCLASS()  
-class PROJECTREMIND_API UPRSettingsShared : public ULocalPlayerSaveGame  
+class PROJECTNAME_API UPRSettingsShared : public ULocalPlayerSaveGame  
 {  
     GENERATED_BODY()  
 public:  
@@ -691,7 +707,9 @@ private:
 };
 ```
 
-```cpp title:PRSettingsShared.cpp
+```cpp
+//PRSettingsShared.cpp
+
 #include "Settings/PRSettingsShared.h"  
 #include "Framework/Application/SlateApplication.h"  
 #include "Misc/App.h"  
@@ -785,7 +803,9 @@ Per capire meglio cosa si intende, si faccia riferimento all'immagine seguente:
 
 La classe `PRGameSettingRegistry` di base è strutturata come segue, ereditando da `GameSettingRegistry`:
 
-```cpp title:PRGameSettingRegistry.h
+```cpp
+//PRGameSettingRegistry.h
+
 #include "GameSettingRegistry.h"
 #include "PRGameSettingRegistry.generated.h"  
   
@@ -807,7 +827,7 @@ GET_FUNCTION_NAME_STRING_CHECKED(UPRSettingsLocal, FunctionOrPropertyName)  \
 }))  
   
 UCLASS()  
-class PROJECTREMIND_API UPRGameSettingRegistry : public UGameSettingRegistry  
+class PROJECTNAME_API UPRGameSettingRegistry : public UGameSettingRegistry  
 {  
     GENERATED_BODY()  
 public:  
@@ -834,7 +854,9 @@ protected:
 };
 ```
 
-```cpp title:PRGameSettingRegistry.cpp
+```cpp
+//PRGameSettingRegistry.cpp
+
 #include "Settings/PRGameSettingRegistry.h"  
 #include "GameSettingCollection.h"  
 #include "Settings/PRSettingsLocal.h"  
@@ -890,10 +912,10 @@ void UPRGameSettingRegistry::SaveChanges()
 #undef LOCTEXT_NAMESPACE
 ```
 
-Come nella figura precedente, sono state create 3 categorie principali, ovvero 3 `GameSettingCollection`: `VideoSettings`, `GameplaySettings` e `AudioSettings`. Ognuna di queste viene inizializzata all'inizializzazione del `Game Setting Registry` stesso, ma per ognuna di esse è previsto che venga creato un file `.cpp` a parte (probabilmente per tenere il codice ordinato e più leggibile). In questi file vengono poi definite le funzioni di inizializzazione, in cui vengono create le eventuali sotto-categorie e i vari settings, come si vede nella prossima sezione. 
+Come nella figura precedente, sono state create 3 categorie principali, ovvero 3 `GameSettingCollection`: `VideoSettings`, `GameplaySettings` e `AudioSettings`. Ognuna di queste viene inizializzata all'inizializzazione del `Game Setting Registry` stesso, ma per ognuna di esse è previsto che venga creato un file `.cpp` a parte (probabilmente per tenere il codice ordinato e più leggibile). In questi file vengono poi definite le funzioni di inizializzazione, in cui vengono create le eventuali sotto-categorie e i vari settings, come si vede nella [prossima sezione](https://github.com/CamillaBianca/UE5_LyraGameSettings/tree/main?tab=readme-ov-file#221-gamesettingcollection). 
 #### 2.2.1. GameSettingCollection
 ##### 2.2.1.1. Possibili tipi di Settings
-Nel momento in cui viene scritta questa guida, da *Lyra* sono stati riportati 3 tipi di Settings, ognuno dei quali è associato a uno specifico Widget (ancora da creare, verranno trattati nella sezione ***GameSetting Registry Visuals***):
+Nel momento in cui viene scritta questa guida, da *Lyra* sono stati riportati 3 tipi di Settings, ognuno dei quali è associato a uno specifico Widget (ancora da creare, verranno trattati nella [sezione ***GameSetting Registry Visuals***](https://github.com/CamillaBianca/UE5_LyraGameSettings/tree/main?tab=readme-ov-file#23-gamesetting-registry-visuals)):
 
 - `GameSettingValueDiscrete`: permette di selezionare un'opzione tra diversi valori discreti (siano essi `enum`, `bool`, `int32`, ecc.):
   
@@ -917,22 +939,24 @@ Per realizzare una pagina di Settings che si presenta in questo modo:
 - Uno o più `GameSettingValue` per visualizzare i diversi Settings (nell'esempio in alto, un `GameSettingValueDiscreteDynamic_Enum` per il setting "Difficulty", un altro `GameSettingValueDiscreteDynamic_Enum` per il setting "Number of Players" e un `GameSettingValueDiscreteDynamic_Bool` per il setting "Arachnophobia Mode").
 
 È importante che ogni `GameSettingCollection` abbia:
-- Un `DevName` <span class="symbols-prettifier-important">!important</span> **univoco**, con il quale poterlo richiamare nel codice e nei Blueprint;
+- Un `DevName` **univoco**, con il quale poterlo richiamare nel codice e nei Blueprint;
 - Un `DisplayName` con il quale viene visualizzato a schermo.
 
 È importante che ogni `GameSettingValue` abbia:
-- Un `DevName` <span class="symbols-prettifier-important">!important</span> **univoco**, con il quale poterlo richiamare nel codice e nei Blueprint;
+- Un `DevName` **univoco**, con il quale poterlo richiamare nel codice e nei Blueprint;
 - Un `DisplayName` con il quale viene visualizzato a schermo;
 - Un `DescriptionRichText` con il quale fornire una descrizione del setting;
-- Un `DynamicGetter` e un `DynamicSetter`, usando le macro definite in `PRSettingsLocal` e `PRSettingsShared`;
+- Un `DynamicGetter` e un `DynamicSetter`, usando le macro definite in [`PRSettingsLocal`](https://github.com/CamillaBianca/UE5_LyraGameSettings/tree/main?tab=readme-ov-file#211-local-settings) e [`PRSettingsShared`](https://github.com/CamillaBianca/UE5_LyraGameSettings/tree/main?tab=readme-ov-file#212-shared-settings);
 - Un `SetDefaultValue` per settare il valore di default;
-- Nel caso dei `GameSettingValueDiscrete` (che non siano booleani), diversi `AddOption` (o `AddEnumOption`) per inserire i valori;
+- Nel caso dei `GameSettingValueDiscrete` (che non siano booleani), alcuni `AddOption` (o `AddEnumOption`) per inserire i valori;
 - Nel caso dei `GameSettingValueScalar`:
 	- Un `DisplayFormat` che normalizza i valori visualizzati nella UI;
 	- Un `SourceRangeAndStep` che definisce il range e di quanto ci si sposta da un valore all'altro quando si sposta lo *slider*;
 	- Un eventuale `MinimumLimit`, se non è 0.
 
-```cpp title:PRGameSettingRegistry_Gameplay.cpp
+```cpp
+//PRGameSettingRegistry_Gameplay.cpp
+
 #include "Settings/PRGameSettingRegistry.h"  
 #include "GameSettingCollection.h"  
 #include "EditCondition/WhenPlayingAsPrimaryPlayer.h"  
@@ -1011,13 +1035,15 @@ UGameSettingCollection* UPRGameSettingRegistry::InitializeGameplaySettings(UPRLo
 #undef LOCTEXT_NAMESPACE
 ```
 ##### 2.2.1.3. VideoSettings
-Come per la sezione ***GameplaySettings***, si segue una struttura di `GameSettingCollection` e `GameSettingValue`. Per realizzare una pagina di questo tipo:
+Come per la [sezione ***GameplaySettings***](https://github.com/CamillaBianca/UE5_LyraGameSettings/tree/main?tab=readme-ov-file#2212-gameplaysettings), si segue una struttura di `GameSettingCollection` e `GameSettingValue`. Per realizzare una pagina di questo tipo:
 
 ![](Img/PRGameSettingRegistry_Video.png)
 
 serve un file `.cpp` così composto:
 
-```cpp title:PRGameSettingRegistry_Video.cpp
+```cpp
+//PRGameSettingRegistry_Video.cpp
+
 #include "Settings/PRGameSettingRegistry.h"  
 #include "GameSettingCollection.h"  
 #include "EditCondition/WhenPlayingAsPrimaryPlayer.h"  
@@ -1094,7 +1120,7 @@ UGameSettingCollection* UPRGameSettingRegistry::InitializeVideoSettings(UPRLocal
 #undef LOCTEXT_NAMESPACE
 ```
 ##### 2.2.1.4. AudioSettings
-Come per la sezione ***GameplaySettings***, si segue una struttura di `GameSettingCollection` e `GameSettingValue`. Per realizzare una pagina di questo tipo:
+Come per la [sezione ***GameplaySettings***](https://github.com/CamillaBianca/UE5_LyraGameSettings/tree/main?tab=readme-ov-file#2212-gameplaysettings), si segue una struttura di `GameSettingCollection` e `GameSettingValue`. Per realizzare una pagina di questo tipo:
 
 ![](Img/PRGameSettingRegistry_Audio.png)
 
@@ -1104,7 +1130,9 @@ che al click del bottone "Options" visualizzi quest'altro set di impostazioni:
 
 serve un file `.cpp` così composto:
 
-```cpp title:PRGameSettingRegistry_Audio.cpp
+```cpp
+//PRGameSettingRegistry_Audio.cpp
+
 #include "Settings/PRGameSettingRegistry.h"  
 #include "GameSettingCollection.h"  
 #include "EditCondition/WhenPlayingAsPrimaryPlayer.h"  
@@ -1295,12 +1323,8 @@ con la seguente dimensione:
 ![](Img/ScreenSizeDesired.png)
 
 e con il seguente `Graph`:
-> [!info]- WBP_EnumOptionExtension Graph
-> <iframe width="650" height="700" src="https://blueprintue.com/render/dcsbhxp5/" scrolling="no" allowfullscreen></iframe>
-> 
->  Se il Blueprint non viene visualizzato correttamente, cliccare su "Graph" in alto. Altrimenti, cliccare sul seguente link:
-> 
-> [Open Graph](https://blueprintue.com/blueprint/dcsbhxp5/)
+> [!IMPORTANT]
+> **WBP_EnumOptionExtension**: [Open Graph on BlueprintUE](https://blueprintue.com/blueprint/dcsbhxp5/)
 
 È importante che la componente `EnumOptions`, di tipo `DynamicEntryBox`, abbia popolato il campo `EntryWidgetClass` con un altro widget, creato a breve. Lo stesso widget deve essere inserito nella `Entry Class` del nodo `Create Entry of Class` della funzione `RebuildOptions` del `Graph` del widget `EnumOptionExtension`, qui sopra.
 
@@ -1312,12 +1336,8 @@ con la seguente dimensione:
 ![](Img/ScreenSizeDesired.png)
 
 e con il seguente `Graph`:
-> [!info]- WBP_EnumOptionDetailsEntry Graph
-> <iframe width="650" height="700" src="https://blueprintue.com/render/-bmn-jyk/" scrolling="no" allowfullscreen></iframe>
->
-> Se il Blueprint non viene visualizzato correttamente, cliccare su "Graph" in alto. Altrimenti, cliccare sul seguente link:
->
-> [Open Graph](https://blueprintue.com/blueprint/-bmn-jyk/)
+> [!IMPORTANT]
+> **WBP_EnumOptionDetailsEntry**: [Open Graph on BlueprintUE](https://blueprintue.com/blueprint/-bmn-jyk/)
 
 Infine, è importante ricordarsi di aggiungere le eventuali estensioni nell'asset `GameSettingRegistryVisuals`:
 
@@ -1331,7 +1351,9 @@ Infine, è importante ricordarsi di aggiungere le eventuali estensioni nell'asse
 ##### 3.1.1.1. Action Widget per i bottoni
 Il primo elemento da creare serve per utilizzare i bottoni con la CommonUI, perciò è necessario creare una classe `PRActionWidget` che eredita da `CommonActionWidget`.
 
-```cpp title:PRActionWidget.h
+```cpp
+//PRActionWidget.h
+
 #include "CoreMinimal.h"  
 #include "CommonActionWidget.h"  
 #include "PRActionWidget.generated.h"  
@@ -1341,7 +1363,7 @@ class UInputAction;
   
 /** An action widget that will get the icon of key that is currently assigned to the common input action on this widget */  
 UCLASS(BlueprintType, Blueprintable)  
-class PROJECTREMIND_API UPRActionWidget : public UCommonActionWidget  
+class PROJECTNAME_API UPRActionWidget : public UCommonActionWidget  
 {  
     GENERATED_BODY()  
 public:  
@@ -1358,7 +1380,9 @@ private:
 };
 ```
 
-```cpp title:PRActionWidget.cpp
+```cpp
+//PRActionWidget.cpp
+
 #include "Settings/PRActionWidget.h"  
 #include "CommonInputBaseTypes.h"  
 #include "CommonInputSubsystem.h"  
@@ -1397,7 +1421,9 @@ Poi, a partire da questa classe, basta creare un Blueprint chiamato "`InputActio
 ##### 3.1.1.2. Bottone di base
 Il primo widget utile da realizzare prima degli altri è figlio di `PRButtonBase`, ovvero una nuova classe da creare, che eredita da `CommonButtonBase`:
 
-```cpp title:PRButtonBase.h
+```cpp
+//PRButtonBase.h
+
 #include "CoreMinimal.h"  
 #include "CommonButtonBase.h"  
 #include "PRButtonBase.generated.h"  
@@ -1406,7 +1432,7 @@ class UObject;
 struct FFrame;  
   
 UCLASS(Abstract, BlueprintType, Blueprintable)  
-class PROJECTREMIND_API UPRButtonBase : public UCommonButtonBase  
+class PROJECTNAME_API UPRButtonBase : public UCommonButtonBase  
 {  
     GENERATED_BODY()  
   
@@ -1437,7 +1463,9 @@ private:
 };
 ```
 
-```cpp title:PRButtonBase.cpp
+```cpp
+//PRButtonBase.cpp
+
 #include "Settings/PRButtonBase.h"  
 #include "CommonActionWidget.h"  
   
@@ -1508,12 +1536,8 @@ Si noti che:
 
 Il `Graph` è realizzato in questo modo:
 
-> [!info]- WBP_PRMenuButton Graph
-> <iframe width="650" height="700" src="https://blueprintue.com/render/ncddt172/" scrolling="no" allowfullscreen></iframe>
->
-> Se il Blueprint non viene visualizzato correttamente, cliccare su "Graph" in alto. Altrimenti, cliccare sul seguente link: 
->
->[Open Graph](https://blueprintue.com/blueprint/ncddt172/)
+> [!IMPORTANT]
+> **WBP_PRMenuButton**: [Open Graph on BlueprintUE](https://blueprintue.com/blueprint/ncddt172/)
 
 Si noti che:
 - Quando si ricopia il `Graph` dal sito fornito sopra, alcune variabili saranno di colore grigio. Alcune sono componenti già create nella parte `Designer` del widget alle quali manca solo la spunta su `Is Variable`:
@@ -1607,12 +1631,8 @@ Si noti che:
   ![](Img/WBP_SettingsListEntry_SubCollection_Button_Navigate.png)
 
 Il `Graph` è il seguente:
-> [!info]- WBP_SettingsListEntry_SubCollection Graph
-> <iframe width="650" height="700" src="https://blueprintue.com/render/-b-pztat/" scrolling="no" allowfullscreen></iframe>
->
-> Se il Blueprint non viene visualizzato correttamente, cliccare su "Graph" in alto. Altrimenti, cliccare sul seguente link: 
->
->[Open Graph](https://blueprintue.com/blueprint/-b-pztat/)
+> [!IMPORTANT]
+> **WBP_SettingsListEntry_SubCollection**: [Open Graph on BlueprintUE](https://blueprintue.com/blueprint/-b-pztat/)
 
 Si noti che:
 - La funzione `GetPrimaryGamepad Focus Widget` è un override della funzione già presente nella classe padre (`GameSettingListEntrySetting_Navigation`), e viene utilizzata quando si usa il gamepad al posto di mouse e tastiera (come si vedrà più approfonditamente in una sezione successiva);
@@ -1650,12 +1670,8 @@ con la seguente dimensione:
 - `Rotator_SettingValue` è il widget `WBP_SettingRotator` precedentemente creato.
 
 Il `Graph` è il seguente:
-> [!info]- WBP_SettingsListEntry_Discrete Graph
-> <iframe width="650" height="700" src="https://blueprintue.com/render/dfzpz9pj/" scrolling="no" allowfullscreen></iframe>
->
-> Se il Blueprint non viene visualizzato correttamente, cliccare su "Graph" in alto. Altrimenti, cliccare sul seguente link: 
->
->[Open Graph](https://blueprintue.com/blueprint/dfzpz9pj/)
+> [!IMPORTANT]
+> **WBP_SettingsListEntry_Discrete**: [Open Graph on BlueprintUE](https://blueprintue.com/blueprint/dfzpz9pj/)
 
 Si noti che la funzione `GetPrimaryGamepad Focus Widget` è un override della funzione già presente nella classe padre (`GameSettingListEntrySetting_Discrete`), e viene utilizzata quando si usa il gamepad al posto di mouse e tastiera (come si vedrà più approfonditamente in una sezione successiva).
 
@@ -1680,12 +1696,8 @@ con la seguente dimensione:
 - `Slider_SettingValue` è un `AnalogSlider`.
 
 Il `Graph` è il seguente:
-> [!info]- WBP_SettingsListEntry_Scalar Graph
-> <iframe width="650" height="700" src="https://blueprintue.com/render/a9w4p1jh/" scrolling="no" allowfullscreen></iframe>
->
-> Se il Blueprint non viene visualizzato correttamente, cliccare su "Graph" in alto. Altrimenti, cliccare sul seguente link: 
->
->[Open Graph](https://blueprintue.com/blueprint/a9w4p1jh/)
+> [!IMPORTANT]
+> WBP_SettingsListEntry_Scalar: [Open Graph on BlueprintUE](https://blueprintue.com/blueprint/a9w4p1jh/)
 
 Si noti che:
 - La funzione `GetPrimaryGamepad Focus Widget` è un override della funzione già presente nella classe padre (`GameSettingListEntrySetting_Scalar`), e viene utilizzata quando si usa il gamepad al posto di mouse e tastiera (come si vedrà più approfonditamente in una sezione successiva);
@@ -1701,7 +1713,9 @@ La barra superiore della pagina dei Game Settings ha bisogno di due nuovi widget
 ##### 3.2.1.1. Horizontal Tab List
 Il primo widget, `WBP_HorizontalTabList`, viene creato a partire dalla nuova classe `PRTabListWidgetBase`, figlia della classe `CommonTabListWidgetBase` e così composta:
 
-```cpp title:PRTabListWidgetBase.h
+```cpp
+//PRTabListWidgetBase.h
+
 #include "CoreMinimal.h"  
 #include "CommonTabListWidgetBase.h"  
 #include "PRTabListWidgetBase.generated.h"  
@@ -1755,7 +1769,7 @@ public:
 };  
   
 UCLASS(Blueprintable, BlueprintType, Abstract, meta = (DisableNativeTick))  
-class PROJECTREMIND_API UPRTabListWidgetBase : public UCommonTabListWidgetBase  
+class PROJECTNAME_API UPRTabListWidgetBase : public UCommonTabListWidgetBase  
 {  
     GENERATED_BODY()  
   
@@ -1795,7 +1809,9 @@ private:
 };
 ```
 
-```cpp title:PRTabListWidgetBase.cpp
+```cpp
+//PRTabListWidgetBase.cpp
+
 #include "Settings/PRTabListWidgetBase.h"  
 #include "CommonAnimatedSwitcher.h"  
 #include "CommonButtonBase.h"  
@@ -1917,16 +1933,14 @@ e con la seguente dimensione:
 - `PreviosTabAction` e `NextTabAction` sono `CommonActionWidget`.
 
 Il `Graph` di questo widget è realizzato in questo modo:
-> [!info]- WBP_HorizontalTabList Graph
-> <iframe width="650" height="700" src="https://blueprintue.com/render/9z440ngc/" scrolling="no" allowfullscreen></iframe>
->
-> Se il Blueprint non viene visualizzato correttamente, cliccare su "Graph" in alto. Altrimenti, cliccare sul seguente link: 
->
->[Open Graph](https://blueprintue.com/blueprint/9z440ngc/)
+> [!IMPORTANT]
+> **WBP_HorizontalTabList**: [Open Graph on BlueprintUE](https://blueprintue.com/blueprint/9z440ngc/)
 ##### 3.2.1.2. Tab Button Base
 Dopodiché è possibile creare il secondo widget, il `WBP_PRButtonTab`. Per farlo, creare prima la classe  `PRTabButtonBase`, figlia della classe `PRButtonBase`, in questo modo:
 
-```cpp title:PRTabButtonBase.h
+```cpp
+//PRTabButtonBase.h
+
 #include "CoreMinimal.h"  
 #include "PRTabListWidgetBase.h"  
 #include "Settings/PRButtonBase.h"  
@@ -1935,7 +1949,7 @@ Dopodiché è possibile creare il secondo widget, il `WBP_PRButtonTab`. Per farl
 class UCommonLazyImage;  
   
 UCLASS()  
-class PROJECTREMIND_API UPRTabButtonBase : public UPRButtonBase, public IPRTabButtonInterface  
+class PROJECTNAME_API UPRTabButtonBase : public UPRButtonBase, public IPRTabButtonInterface  
 {  
     GENERATED_BODY()  
 public:  
@@ -1955,7 +1969,9 @@ private:
 };
 ```
 
-```cpp title:PRTabButtonBase.cpp
+```cpp
+//PRTabButtonBase.cpp
+
 #include "Settings/PRTabButtonBase.h"  
 #include "CommonLazyImage.h"  
   
@@ -2001,12 +2017,8 @@ e con la seguente dimensione:
 - `ButtonTextBlock` è un `CommonTextBlock`.
 
 Il `Graph` di questo widget è realizzato in questo modo:
-> [!info]- WBP_PRButtonTab Graph
-> <iframe width="650" height="700" src="https://blueprintue.com/render/pffjgl1r/" scrolling="no" allowfullscreen></iframe>
->
-> Se il Blueprint non viene visualizzato correttamente, cliccare su "Graph" in alto. Altrimenti, cliccare sul seguente link: 
->
->[Open Graph](https://blueprintue.com/blueprint/pffjgl1r/)
+> [!IMPORTANT]
+> **WBP_PRButtonTab**: [Open Graph on BlueprintUE](https://blueprintue.com/blueprint/pffjgl1r/)
 
 Si noti che:
 - Le variabili `Hovered` e `Selected` sono due animazioni create nella sezione `Designer → Animations` del Blueprint e vengono visualizzate rispettivamente quando si passa col mouse sopra al widget e quando si seleziona il widget;
@@ -2031,12 +2043,8 @@ Ora è possibile creare il pannello centrale della schermata di Game Settings, `
 - `Details_Settings` è il widget `WBP_GameSettingDetailView` (ancora da creare, spiegato nella sezione successiva).
 
 Il `Graph` di questo widget contiene una sola funzione ed è il seguente:
-> [!info]- WBP_SettingsPanel Graph
-> <iframe width="650" height="700" src="https://blueprintue.com/render/cefzxh_k/" scrolling="no" allowfullscreen></iframe>
->
-> Se il Blueprint non viene visualizzato correttamente, cliccare su "Graph" in alto. Altrimenti, cliccare sul seguente link: 
->
->[Open Graph](https://blueprintue.com/blueprint/cefzxh_k/)
+> [!IMPORTANT]
+> **WBP_SettingsPanel**: [Open Graph on BlueprintUE](https://blueprintue.com/blueprint/cefzxh_k/)
 
 La variabile `OnParentScreenActivated` è un'animazione creata nella sezione `Designer → Animations` del Blueprint e viene visualizzata quando appare il widget a schermo.
 ##### 3.2.2.1. Game Settings Details
@@ -2077,7 +2085,9 @@ che ha questi stili, utilizzabili sempre tramite tag:
 ##### 3.2.3.1. Action Button
 Per realizzare la barra inferiore della schermata dei Game Settings è necessario innanzitutto creare la classe C++ `PRBoundActionButton`, figlia della classe`CommonBoundActionButton`:
 
-```cpp title:PRBoundActionButton.h
+```cpp
+//PRBoundActionButton.h
+
 #include "CoreMinimal.h"  
 #include "Input/CommonBoundActionButton.h"  
 #include "PRBoundActionButton.generated.h"  
@@ -2086,7 +2096,7 @@ class UCommonButtonStyle;
 class UObject;  
   
 UCLASS(Abstract, meta = (DisableNativeTick))  
-class PROJECTREMIND_API UPRBoundActionButton : public UCommonBoundActionButton  
+class PROJECTNAME_API UPRBoundActionButton : public UCommonBoundActionButton  
 {  
     GENERATED_BODY()  
   
@@ -2107,7 +2117,9 @@ private:
 };
 ```
 
-```cpp title:PRBoundActionButton.cpp
+```cpp
+//PRBoundActionButton.cpp
+
 #include "Settings/PRBoundActionButton.h"  
 #include "CommonInputSubsystem.h"  
 #include "CommonInputTypeEnum.h"  
@@ -2164,12 +2176,8 @@ e con la seguente dimensione:
 - `Text_ActionName` è un `CommonTextBlock`.
 
 Il `Graph` di questo widget è costruito come segue:
-> [!info]- WBP_BoundActionButton Graph
-> <iframe width="650" height="700" src="https://blueprintue.com/render/8i8prcyq/" scrolling="no" allowfullscreen></iframe>
->
-> Se il Blueprint non viene visualizzato correttamente, cliccare su "Graph" in alto. Altrimenti, cliccare sul seguente link: 
->
->[Open Graph](https://blueprintue.com/blueprint/8i8prcyq/)
+> [!IMPORTANT]
+> **WBP_BoundActionButton**: [Open Graph on BlueprintUE](https://blueprintue.com/blueprint/8i8prcyq/)
 
 Si noti che:
 - Il nodo `/Script/Blueprint Graph.K2Node Get Subsystem` rappresenta il `CommonInput Subsystem`, che si può trovare nel grafo facendo `click destro` e cercando "*Get CommonInput*":
@@ -2193,7 +2201,9 @@ e con la seguente dimensione:
 #### 3.2.4. Assemblare il Game Settings Screen
 Per creare il widget principale `WBP_PRSettingScreen` è necessario innanzitutto creare una classe C++ chiamata `PRSettingScreen`, figlia della classe `GameSettingScreen`, così formata:
 
-```cpp title:PRSettingScreen.h
+```cpp
+//PRSettingScreen.h
+
 #include "CoreMinimal.h"  
 #include "Widgets/GameSettingScreen.h"  
   
@@ -2203,7 +2213,7 @@ class UGameSettingRegistry;
 class UPRTabListWidgetBase;  
   
 UCLASS(Abstract, meta = (Category = "Settings", DisableNativeTick))  
-class PROJECTREMIND_API UPRSettingScreen : public UGameSettingScreen  
+class PROJECTNAME_API UPRSettingScreen : public UGameSettingScreen  
 {  
     GENERATED_BODY()  
 protected:  
@@ -2233,7 +2243,9 @@ protected:
 };
 ```
 
-```cpp title:PRSettingScreen.cpp
+```cpp
+//PRSettingScreen.cpp
+
 #include "Settings/PRSettingScreen.h"  
 #include "Input/CommonUIInputTypes.h"  
 #include "Kismet/GameplayStatics.h"  
@@ -2331,11 +2343,8 @@ WBP_PRSettingScreen.png)
 - `WBP_BottomActionBar` è l'omonimo widget creato in precedenza.
 
 Il `Graph` del widget è così composto:
-> [!info]- WBP_PRSettingScreen Graph
-> <iframe width="900" height="700" src="https://blueprintue.com/render/kw_sbuhq/" scrolling="no" allowfullscreen></iframe>
->Se il Blueprint non viene visualizzato correttamente, cliccare su "Graph" in alto. Altrimenti, cliccare sul seguente link: 
->
->[Open Graph](https://blueprintue.com/blueprint/kw_sbuhq/)
+> [!IMPORTANT]
+> **WBP_PRSettingScreen**: [Open Graph on BlueprintUE](https://blueprintue.com/blueprint/kw_sbuhq/)
 
 Si noti che:
 - Nel nodo `Make PRTabDescriptor` della funzione `RegisterTopLevelTab`, viene creato un widget `WBP_PRButtonTab`, definito pocanzi;
@@ -2371,12 +2380,8 @@ Si ricordi che, per completare la procedura, è necessario:
 	- GameSettingValueScalar Widget (`WBP_SettingsListEntry_Scalar`).
 ### 3.4. Visualizzare il menu
 Per testare che funzioni tutto, basta inserire il seguente codice nel `Graph` del player:
-> [!info]- PlayerCharacter Graph
-> <iframe width="650" height="700" src="https://blueprintue.com/render/ocb89khi/" scrolling="no" allowfullscreen></iframe>
->
-> Se il Blueprint non viene visualizzato correttamente, cliccare su "Graph" in alto. Altrimenti, cliccare sul seguente link: 
->
->[Open Graph](https://blueprintue.com/blueprint/ocb89khi/)
+> [!IMPORTANT]
+> **PlayerCharacter**: [Open Graph on BlueprintUE](https://blueprintue.com/blueprint/ocb89khi/)
 
 Ora, alla pressione del tasto `L` sulla tastiera, il menu appare. Per farlo scomparire, basta andare sul tasto `Back` oppure si può usare il tasto precedentemente settato come *DefaultBack* nel file `DT_Universal`, in questo caso sempre `L`:
 
